@@ -23,6 +23,7 @@ Toplama (Gather/Reduce): İşçiler buldukları sonuçları Ana Prosese gönderi
 ### 🛠 Kurulum ve Gereksinimler
 Bu projeyi çalıştırmak için bilgisayarınızda bir MPI implementasyonu ve ilgili Python kütüphanesi yüklü olmalıdır.
 1. MPI Yüklemesi
+
 Windows için: Microsoft MPI (MS-MPI) yüklemeniz gerekir.
 
 Linux/macOS için: OpenMPI veya MPICH kullanabilirsiniz.
