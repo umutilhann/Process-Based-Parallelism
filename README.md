@@ -43,7 +43,9 @@ Kodu doğrudan python komutu ile çalıştırmak yerine, MPI ortamını başlata
 Eğer işlemci sayısını değiştirmek isterseniz -n parametresinden sonraki sayıyı (örn: 8) değiştirebilirsiniz.
 
 4. 📊 Örnek Çıktı
+   
 Program başarıyla çalıştığında aşağıdakine benzer bir çıktı verecektir:
+
     Hesaplama icin 4 MPI prosesi kullaniliyor...
     Toplam 200000000 elemanli dizi, 4 parcaya bolundu.
     
