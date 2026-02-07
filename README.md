@@ -35,6 +35,7 @@ Gerekli Python kütüphanesini yükleyin:
     pip install mpi4py
 
 3. ▶️ Kullanım
+   
 Kodu doğrudan python komutu ile çalıştırmak yerine, MPI ortamını başlatan mpiexec veya mpirun komutunu kullanmalısınız.
 
 Örneğin, kodu 4 çekirdek üzerinde çalıştırmak için terminale şu komutu girin:
