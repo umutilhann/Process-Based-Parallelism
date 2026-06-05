@@ -1,62 +1,68 @@
+# 🧬 MPI ile Paralel DNA Dizilimi Analizi
 
-# 🧬MPI ile Paralel DNA Dizilimi Analizi
+Python ve `mpi4py` kullanarak 200 milyon elemanlı bir DNA dizisi içinde belirli bir genetik kodun (`ACTAGATG`) aranmasını simüle eden paralel hesaplama projesi.
 
+---
 
-Bu proje, Python ve mpi4py kütüphanesini kullanarak büyük ölçekli bir DNA dizilimi içerisinde spesifik bir genetik kodun (ACTAGATG) aranmasını simüle eder. İşlemi hızlandırmak için Proses Tabanlı Paralelleştirme (Process-Based Parallelism) kullanılmıştır.
+## Proje Hakkında
 
+Uygulama, rastgele oluşturulmuş 200.000.000 elemanlı bir DNA dizisini (A, T, G, C) analiz eder. İş yükünü tek bir işlemci yerine MPI protokolü aracılığıyla birden fazla çekirdeğe dağıtarak arama süresini minimize eder.
 
+---
 
-## 🚀 Proje Hakkında
+## Çalışma Mantığı — Master-Worker Modeli
 
-Bu uygulama, toplamda 200.000.000 elemanlı rastgele oluşturulmuş bir DNA dizisini (A, T, G, C) analiz eder. Tek bir işlemci yerine, MPI protokolü ile iş yükünü birden fazla işlemci çekirdeğine (Core) dağıtarak arama süresini minimize etmeyi amaçlar.
+| Aşama | Açıklama |
+|---|---|
+| **Dağıtım (Scatter)** | Rank 0 (Ana Proses), veriyi işlemci sayısına böler; her worker'a chunk boyutunu ve seed değerini bildirir |
+| **İşleme (Processing)** | Her proses kendi chunk'ını bellekte oluşturur ve `ACTAGATG` dizilimini kendi parçasında sayar |
+| **Kesişim Kontrolü** | Dizilimin parça sınırında bölünmesini önlemek için parçalar arası örtüşme (overlap) alanları hesaba katılır |
+| **Toplama (Gather/Reduce)** | Worker'lar sonuçlarını Ana Proses'e gönderir; Rank 0 tüm sonuçları toplar ve toplam süreyi hesaplar |
 
-#### Çalışma Mantığı (Master-Worker Modeli)
+---
 
-Dağıtım (Scatter): Rank 0 (Ana Proses), toplam veri uzunluğunu mevcut işlemci sayısına böler ve her bir "işçi" prosese ne kadar veri üreteceğini ve hangi seed değerini kullanacağını bildirir.
+## Kurulum
 
-İşleme (Processing): Her bir proses (Worker), kendisine atanan parçayı (Chunk) bellekte oluşturur ve aranan dizilimi (ACTAGATG) kendi parçasında sayar.
+### 1. MPI
 
-Kesişim Kontrolü: Veri parçalara bölündüğünde, aranan kelimenin tam sınırda kalıp bölünmesini engellemek için kod, parçalar arası "kesişim alanlarını" (overlap) da hesaba katar.
+İşletim sisteminize göre bir MPI implementasyonu yükleyin:
 
-Toplama (Gather/Reduce): İşçiler buldukları sonuçları Ana Prosese gönderir. Rank 0, tüm sonuçları toplar ve toplam süreyi hesaplar.
+- **Windows** — [Microsoft MPI (MS-MPI)](https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi)
+- **Linux / macOS** — OpenMPI veya MPICH
 
-### 🛠 Kurulum ve Gereksinimler
-Bu projeyi çalıştırmak için bilgisayarınızda bir MPI implementasyonu ve ilgili Python kütüphanesi yüklü olmalıdır.
-1. MPI Yüklemesi
+### 2. Python Kütüphanesi
 
-Windows için: Microsoft MPI (MS-MPI) yüklemeniz gerekir.
+```bash
+pip install mpi4py
+```
 
-Linux/macOS için: OpenMPI veya MPICH kullanabilirsiniz.
+---
 
-2. Python Kütüphanesi
+## Kullanım
 
-Gerekli Python kütüphanesini yükleyin:
-   
-    pip install mpi4py
+Kodu doğrudan `python` ile değil, MPI ortamını başlatan `mpiexec` komutuyla çalıştırın:
 
-3. ▶️ Kullanım
-   
-Kodu doğrudan python komutu ile çalıştırmak yerine, MPI ortamını başlatan mpiexec veya mpirun komutunu kullanmalısınız.
+```bash
+mpiexec -n 4 python 1MPI_Ornek.py
+```
 
-Örneğin, kodu 4 çekirdek üzerinde çalıştırmak için terminale şu komutu girin:
-   
-    mpiexec -n 4 python 1MPI_Ornek.py
+`-n` parametresini değiştirerek kullanılacak çekirdek sayısını ayarlayabilirsiniz (örn. `-n 8`).
 
-Eğer işlemci sayısını değiştirmek isterseniz -n parametresinden sonraki sayıyı (örn: 8) değiştirebilirsiniz.
+---
 
-4. 📊 Örnek Çıktı
-   
-Program başarıyla çalıştığında aşağıdakine benzer bir çıktı verecektir:
+## Örnek Çıktı
 
-    Hesaplama icin 4 MPI prosesi kullaniliyor...
-    Toplam 200000000 elemanli dizi, 4 parcaya bolundu.
-    
-    Olusturulan Ornek Genetik Dizinin Uzunlugu: 200000000
-   
-    Aranan Dizilim: 'ACTAGATG'
-   
-    'ACTAGATG' dizilimi, ornek dizi icinde yaklasik 3052 kez bulundu.
-   
-    Yuzde 0.0020'dir.
-   
-    Islem 3.42 saniyede tamamlandi.
+```
+Hesaplama icin 4 MPI prosesi kullaniliyor...
+Toplam 200000000 elemanli dizi, 4 parcaya bolundu.
+
+Olusturulan Ornek Genetik Dizinin Uzunlugu: 200000000
+
+Aranan Dizilim: 'ACTAGATG'
+
+'ACTAGATG' dizilimi, ornek dizi icinde yaklasik 3052 kez bulundu.
+
+Yuzde 0.0020'dir.
+
+Islem 3.42 saniyede tamamlandi.
+```
